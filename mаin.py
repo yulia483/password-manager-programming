@@ -145,7 +145,36 @@ def load(key):
             print("Повреждённая запись пропущена.")
     return records
 
+def open_vault():
+    #Создаёт новое или открывает существующее хранилище.
+    #Возвращает кортеж (мастер-пароль, список записей) или None.
+    # Открываем в режиме 'a', чтобы создать пустой файл при первом запуске
+    open(FILE_NAME, "a").close()
+    file = open(FILE_NAME, "r", encoding="utf-8")
+    is_empty = file.read() == ""
+    file.close()
 
+    if is_empty:
+        print("Хранилище не найдено. Создаём новое.")
+        while True:
+            key = input("Придумайте мастер-пароль (от 6 символов): ")
+            if len(key) < MIN_KEY_LEN:
+                print("Ошибка: слишком короткий мастер-пароль!")
+            elif key != input("Повторите мастер-пароль: "):
+                print("Ошибка: пароли не совпадают!")
+            else:
+                save([], key)
+                return key, []
+
+    # Даём пользователю 3 попытки на ввод правильного мастер-пароля
+    for attempt in range(1, 4):
+        key = input("Введите мастер-пароль: ")
+        if len(key) >= MIN_KEY_LEN:
+            records = load(key)
+            if records is not None:
+                return key, records
+        print("Неверный мастер-пароль (попытка", attempt, "из 3)")
+    return None
 
 def main():
     #Главная функция: цикл консольного меню.

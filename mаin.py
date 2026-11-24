@@ -223,6 +223,21 @@ def find(records):
     if not found:
         print("Запись не найдена")
 
+def delete(records, key):
+    #Удаляет запись по номеру после подтверждения.
+    show(records)
+    if len(records) == 0:
+        return
+    number = read_int("Номер записи для удаления (0 - отмена): ",
+                      0, len(records))
+    if number == 0:
+        return
+    # Запрашиваем подтверждение перед удалением кортежа из списка
+    if input("Удалить запись? (д/н): ").strip().lower() == "д":
+        records.pop(number - 1)
+        save(records, key)
+        print("Запись удалена!")
+
 def main():
     #Главная функция: цикл консольного меню.
     print("==== Защищённый менеджер паролей ====")
@@ -250,13 +265,14 @@ def main():
             show(records)
         elif choice == 4:
             find(records)
+        elif choice == 5:
+            delete(records, key)
         elif choice == 6:
             reveal(records)
-        if choice == 0:
+        else:
+            save(records, key)
             print("Программа завершена")
             break
-        else:
-            print("Функция в разработке...")
 
 
 if __name__ == "__main__":

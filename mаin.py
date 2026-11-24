@@ -110,6 +110,42 @@ def ask_password():
     print("Сгенерированный пароль:", password)
     return password
 
+def save(records, key):
+    #Записывает в файл проверочную строку и все записи
+    #(каждая запись - кортеж сайт, логин, пароль) в зашифрованном виде.
+    file = open(FILE_NAME, "w", encoding="utf-8")
+    # Первой строкой записываем зашифрованный маркер для проверки ключа
+    file.write(enc(CHECK_WORD, key) + "\n")
+    for record in records:
+        line = SEPARATOR.join(record)
+        file.write(enc(line, key) + "\n")
+    file.close()
+
+
+def load(key):
+    #Читает записи из файла. Возвращает список кортежей
+    #или None, если мастер-пароль неверный.
+    file = open(FILE_NAME, "r", encoding="utf-8")
+    lines = file.read().split("\n")
+    file.close()
+
+    # Сверяем расшифрованную первую строку с эталонным словом
+    if dec(lines[0], key) != CHECK_WORD:
+        return None
+
+    records = []
+    for line in lines[1:]:
+        if line == "":
+            continue
+        # Расшифровываем строку и разрезаем по '|' на 3 элемента: сайт, логин, пароль
+        parts = dec(line, key).split(SEPARATOR)
+        if len(parts) == 3:
+            records.append(tuple(parts))
+        else:
+            print("Повреждённая запись пропущена.")
+    return records
+
+
 
 def main():
     #Главная функция: цикл консольного меню.

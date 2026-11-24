@@ -209,6 +209,20 @@ def show(records):
         print(str(i + 1).ljust(4) + site[:21].ljust(22)
               + login[:21].ljust(22) + "*" * len(password))
 
+def find(records):
+    #Ищет записи по части названия сайта и показывает пароль.
+    query = input("Введите сайт для поиска: ").strip().lower()
+    found = False
+    for site, login, password in records:
+        # Ищем частичное совпадение подстроки без учета больших и маленьких букв
+        if query != "" and query in site.lower():
+            print("\nСайт:", site)
+            print("Логин:", login)
+            print("Пароль:", password)
+            found = True
+    if not found:
+        print("Запись не найдена")
+
 def main():
     #Главная функция: цикл консольного меню.
     print("==== Защищённый менеджер паролей ====")
@@ -228,6 +242,16 @@ def main():
         print("6. Показать пароль по номеру записи")
         print("0. Выход")
         choice = read_int("Выберите действие: ", 0, 6)
+        if choice == 1:
+            ask_password()
+        elif choice == 2:
+            add(records, key)
+        elif choice == 3:
+            show(records)
+        elif choice == 4:
+            find(records)
+        elif choice == 6:
+            reveal(records)
         if choice == 0:
             print("Программа завершена")
             break

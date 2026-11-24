@@ -108,6 +108,7 @@ def ask_password():
     length = read_int("Введите длину пароля (от 8 до 32): ", 8, 32)
     password = make_password(length)
     print("Сгенерированный пароль:", password)
+    print("Надёжность:", check_strength(password)) 
     return password
 
 def save(records, key):
@@ -208,6 +209,20 @@ def show(records):
         site, login, password = records[i]
         print(str(i + 1).ljust(4) + site[:21].ljust(22)
               + login[:21].ljust(22) + "*" * len(password))
+
+def reveal(records):
+    #Показывает открытый пароль выбранной записи по её номеру.
+    show(records)
+    if len(records) == 0:
+        return
+    number = read_int("Номер записи для просмотра пароля (0 - отмена): ",
+                      0, len(records))
+    if number == 0:
+        return
+    site, login, password = records[number - 1]
+    print("\nСайт:", site)
+    print("Логин:", login)
+    print("Пароль:", password)
 
 def find(records):
     #Ищет записи по части названия сайта и показывает пароль.

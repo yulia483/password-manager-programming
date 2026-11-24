@@ -28,6 +28,28 @@ def make_password(length):
     random.shuffle(chars)
     return "".join(chars)
 
+def check_strength(password):
+    #Оценивает пароль: слабый, средний или сильный.
+    # счётчик найденных категорий символов
+    kinds = 0  
+    # Проверяем наличие строчных, заглавных букв и цифр
+    for group in (LOWER, UPPER, DIGITS):
+        for symbol in password:
+            if symbol in group:
+                kinds += 1
+                break
+    # Проверяем наличие хотя бы одного спецсимвола
+    for symbol in password:
+        if symbol not in LOWER + UPPER + DIGITS:
+            kinds += 1
+            break
+
+    if len(password) < 8 or kinds < 2:
+        return "слабый"
+    if len(password) < 12 or kinds < 4:
+        return "средний"
+    return "сильный"
+
 def read_int(prompt, low, high):
     #Запрашивает целое число от low до high до тех пор,
     #пока пользователь не введёт верное значение.

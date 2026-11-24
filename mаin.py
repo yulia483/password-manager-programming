@@ -11,6 +11,23 @@ LOWER = "abcdefghijklmnopqrstuvwxyz"
 UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 DIGITS = "0123456789"
 SYMBOLS = "!@#$%&*"
+
+def make_password(length):
+    #Создаёт случайный пароль заданной длины (от 8 символов).
+    #В пароле есть минимум по одному символу каждого вида.
+    groups = [LOWER, UPPER, DIGITS, SYMBOLS]
+    all_symbols = LOWER + UPPER + DIGITS + SYMBOLS
+    chars = []
+    # Сначала берём по одному случайному символу из каждой категории
+    for group in groups:
+        chars.append(random.choice(group))
+    # Остальную длину добиваем случайными символами из общего набора
+    while len(chars) < length:
+        chars.append(random.choice(all_symbols))
+    # Перемешиваем, чтобы первые 4 символа не шли в предсказуемом порядке
+    random.shuffle(chars)
+    return "".join(chars)
+
 def read_int(prompt, low, high):
     #Запрашивает целое число от low до high до тех пор,
     #пока пользователь не введёт верное значение.
@@ -37,6 +54,13 @@ def read_text(prompt):
             print("Ошибка: нельзя использовать символ", SEPARATOR)
         else:
             return text
+
+def ask_password():
+    #Спрашивает длину и возвращает сгенерированный пароль.
+    length = read_int("Введите длину пароля (от 8 до 32): ", 8, 32)
+    password = make_password(length)
+    print("Сгенерированный пароль:", password)
+    return password
 
 
 def main():

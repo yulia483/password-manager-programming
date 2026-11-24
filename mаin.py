@@ -176,9 +176,47 @@ def open_vault():
         print("Неверный мастер-пароль (попытка", attempt, "из 3)")
     return None
 
+def add(records, key):
+    #Добавляет запись со своим или сгенерированным паролем.
+    site = read_text("Введите название сайта: ")
+    login = read_text("Введите логин: ")
+    # Проверяем дубликаты по паре (сайт + логин)
+    for old_site, old_login, old_password in records:
+        if old_site.lower() == site.lower() and old_login == login:
+            print("Такая запись уже есть!")
+            return
+    answer = input("Сгенерировать пароль автоматически? (д/н): ")
+    if answer.strip().lower() == "д":
+        password = ask_password()
+    else:
+        password = read_text("Введите свой пароль: ")
+        print("Надёжность:", check_strength(password))
+    # Добавляем новую запись в виде кортежа в общий список и сразу сохраняем в файл    
+    records.append((site, login, password))
+    save(records, key)
+    print("Запись добавлена и сохранена!")
+
+
+def show(records):
+    #Выводит таблицу записей, пароли скрыты звёздочками.
+    if len(records) == 0:
+        print("Список записей пуст")
+        return
+    # Выравниваем столбцы таблицы с помощью ljust()
+    print("№".ljust(4) + "Сайт".ljust(22) + "Логин".ljust(22) + "Пароль")
+    for i in range(len(records)):
+        site, login, password = records[i]
+        print(str(i + 1).ljust(4) + site[:21].ljust(22)
+              + login[:21].ljust(22) + "*" * len(password))
+
 def main():
     #Главная функция: цикл консольного меню.
     print("==== Защищённый менеджер паролей ====")
+    vault = open_vault()
+    if vault is None:
+        print("Доступ запрещён")
+        return
+    key, records = vault
 
     while True:
         print("\n==== Менеджер паролей ====")

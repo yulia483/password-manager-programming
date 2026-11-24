@@ -12,6 +12,32 @@ UPPER = "ABCDEFGHIJKLMNOPQRSTUVWXYZ"
 DIGITS = "0123456789"
 SYMBOLS = "!@#$%&*"
 
+def enc(text, key):
+    #Шифрует строку: код каждого символа увеличивается на код
+    #символа ключа. Результат - числа через запятую
+    codes = []
+    for i in range(len(text)):
+        # Циклически берём символы ключа с помощью остатка от деления
+        shift = ord(key[i % len(key)])
+        codes.append(str(ord(text[i]) + shift))
+    return ",".join(codes)
+
+
+def dec(text, key):
+    #Расшифровывает строку, полученную из enc.
+    #Если данные повреждены или ключ неверный, возвращает ''
+    result = ""
+    parts = text.split(",")
+    for i in range(len(parts)):
+        if not parts[i].isdigit():
+            return ""
+        code = int(parts[i]) - ord(key[i % len(key)])
+        # Проверяем, что полученный код существует в таблице Unicode
+        if code < 0 or code > 1114111:
+            return ""
+        result += chr(code)
+    return result
+
 def make_password(length):
     #Создаёт случайный пароль заданной длины (от 8 символов).
     #В пароле есть минимум по одному символу каждого вида.
